@@ -1,11 +1,11 @@
 clear
 close all
-boxImage = rgb2gray(imread('pocket/logo.jpg'));
+boxImage = rgb2gray(imread('hollister/o4.jpg'));
 % figure;
 % imshow(boxImage);
 % title('Image of a Box');
 
-sceneImage = rgb2gray(imread('pocket/s3.jpg'));
+sceneImage = rgb2gray(imread('hollister/s1.jpg'));
 
 
 % boxImage=imgaussfilt(boxImage,10);
@@ -33,7 +33,7 @@ plot(selectStrongest(scenePoints, 300));
 [boxFeatures, boxPoints] = extractFeatures(boxImage, boxPoints);
 [sceneFeatures, scenePoints] = extractFeatures(sceneImage, scenePoints);
 
-boxPairs = matchFeatures(boxFeatures, sceneFeatures);
+boxPairs = matchFeatures(boxFeatures, sceneFeatures,"MatchThreshold",10);
 
 matchedBoxPoints = boxPoints(boxPairs(:, 1), :);
 matchedScenePoints = scenePoints(boxPairs(:, 2), :);
