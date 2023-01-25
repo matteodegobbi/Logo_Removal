@@ -1,28 +1,28 @@
 clear
 close all
-boxImage = rgb2gray(imread('hollister/o4.jpg'));
+logoImage = im2double(rgb2gray(imread('pocket/logo.jpg')));
 % figure;
-% imshow(boxImage);
+% imshow(logoImage);
 % title('Image of a Box');
 
-sceneImage = rgb2gray(imread('hollister/s1.jpg'));
+sceneImage = im2double(rgb2gray(imread('pocket/s6.jpg')));
 
 
-% boxImage=imgaussfilt(boxImage,10);
+% logoImage=imgaussfilt(logoImage,10);
 % sceneImage=imgaussfilt(sceneImage,10);
 
 % figure;
 % imshow(sceneImage);
 % title('Image of a Cluttered Scene');
 
-boxPoints = detectSIFTFeatures(boxImage);
+logoPoints = detectSIFTFeatures(logoImage);
 scenePoints = detectSIFTFeatures(sceneImage);
 
 figure;
-imshow(boxImage);
-title('100 Strongest Feature Points from Box Image');
+imshow(logoImage);
+title('100 Strongest Feature Points from Logo Image');
 hold on;
-plot(selectStrongest(boxPoints, 100));
+plot(selectStrongest(logoPoints, 100));
 
 figure;
 imshow(sceneImage);
@@ -30,46 +30,49 @@ title('300 Strongest Feature Points from Scene Image');
 hold on;
 plot(selectStrongest(scenePoints, 300));
 
-[boxFeatures, boxPoints] = extractFeatures(boxImage, boxPoints);
+[logoFeatures, logoPoints] = extractFeatures(logoImage, logoPoints);
 [sceneFeatures, scenePoints] = extractFeatures(sceneImage, scenePoints);
 
-boxPairs = matchFeatures(boxFeatures, sceneFeatures,"MatchThreshold",10);
+logoPairs = matchFeatures(logoFeatures, sceneFeatures,"MatchThreshold",10);
 
-matchedBoxPoints = boxPoints(boxPairs(:, 1), :);
-matchedScenePoints = scenePoints(boxPairs(:, 2), :);
+matchedLogoPoints = logoPoints(logoPairs(:, 1), :);
+matchedScenePoints = scenePoints(logoPairs(:, 2), :);
 figure;
-showMatchedFeatures(boxImage, sceneImage, matchedBoxPoints, ...
+showMatchedFeatures(logoImage, sceneImage, matchedLogoPoints, ...
     matchedScenePoints, 'montage');
-title('Putatively Matched Points (Including Outliers)');
+title('supposedly Matched Points (Including Outliers)');
 
 
-[tform, inlierIdx] = estgeotform2d(matchedBoxPoints, matchedScenePoints, 'affine');
-inlierBoxPoints   = matchedBoxPoints(inlierIdx, :);
+[tform, inlierIdx] = estgeotform2d(matchedLogoPoints, matchedScenePoints, 'affine');
+inlierLogoPoints   = matchedLogoPoints(inlierIdx, :);
 inlierScenePoints = matchedScenePoints(inlierIdx, :);
 
 figure;
-showMatchedFeatures(boxImage, sceneImage, inlierBoxPoints, ...
+showMatchedFeatures(logoImage, sceneImage, inlierLogoPoints, ...
     inlierScenePoints, 'montage');
 title('Matched Points (Inliers Only)');
 
-boxPolygon = [1, 1;...                           % top-left
-        size(boxImage, 2), 1;...                 % top-right
-        size(boxImage, 2), size(boxImage, 1);... % bottom-right
-        1, size(boxImage, 1);...                 % bottom-left
+logoPolygon = [1, 1;...                           % top-left
+        size(logoImage, 2), 1;...                 % top-right
+        size(logoImage, 2), size(logoImage, 1);... % bottom-right
+        1, size(logoImage, 1);...                 % bottom-left
         1, 1];                   % top-left again to close the polygon
 
-newBoxPolygon = transformPointsForward(tform, boxPolygon);
+newLogoPolygon = transformPointsForward(tform, logoPolygon);
 
 
 figure;
 imshow(sceneImage);
 %hold on;
-roi = drawpolygon(gca,'Position',[newBoxPolygon(:,1),newBoxPolygon(:,2)]);
-%line(newBoxPolygon(:, 1), newBoxPolygon(:, 2), Color='y');
+roi = drawpolygon(gca,'Position',[newLogoPolygon(:,1),newLogoPolygon(:,2)]);
+%line(newLogoPolygon(:, 1), newLogoPolygon(:, 2), Color='y');
 title('Detected Box');
 
 mask = createMask(roi);
 imshow(mask)
 figure
+
+
 J = regionfill(sceneImage,mask);
+
 imshow([sceneImage,J]);
