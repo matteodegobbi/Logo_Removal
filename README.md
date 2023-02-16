@@ -21,6 +21,7 @@ come feature.
 ### approx del Laplace 
 la DOG approssima l'operatore laplaciano con la differenza che non deve essere normalizzato per la scala
 //TODO aggiungi reference lindeberg
-##Rimozione outlier
+##Rimozione feature a contrasto basso o lungo bordi
 Con questa procedura otteniamo troppi feature points dobbiamo eliminare le feature spurie date da punti a basso contrasto o
-punti di sella //TODO CAPISCI BENE STA ROBA
+bordi che non sono dei veri estremi locali. Prima di tutto si rimuovono i punti in aree a basso contrasto utilizzando un threshold al contrasto
+minimo sotto quale 

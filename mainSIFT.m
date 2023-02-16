@@ -1,11 +1,11 @@
 clear
 close all
-logoImage = im2double(rgb2gray(imread('pocket/logo.jpg')));
+logoImage = im2double(rgb2gray(imread('cameo/logo.png')));
 % figure;
 % imshow(logoImage);
 % title('Image of a Box');
 
-sceneImage = im2double(rgb2gray(imread('pocket/s6.jpg')));
+sceneImage = im2double(rgb2gray(imread('cameo/ciobar2.jpg')));
 
 
 % logoImage=imgaussfilt(logoImage,10);
