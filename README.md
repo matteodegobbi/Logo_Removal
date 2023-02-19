@@ -1,4 +1,5 @@
 # Logo Removal con SIFT 
+https://github.com/matteodegobbi/Logo_Removal
 ## Struttura del progetto
 - funzione MATLAB `SIFT_frame_funzione` che rimuove un logo da una foto passata come parametro
 - server MATLAB che riceve una immagine via socket TCP e la censura rimuovendo il logo se presente
