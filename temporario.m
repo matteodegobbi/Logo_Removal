@@ -4,11 +4,8 @@
 % try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
 %     outputStream.write(dataForWriting);
 % }
+
+%dataread=read(S,S.NumBytesAvailable);
 outputFile=javaObject("java.io.File","outputFile.png");
 outputStream=javaObject("java.io.FileOutputStream",outputFile);
-
 javaMethod("write",outputStream,dataread)
-
-% fileA=fopen("ciao.png","W");
-% fprintf(fileA,"%d",dataread)
-% fclose(fileA)

@@ -20,3 +20,9 @@ cDOG=c1-c2;
 subplot(2,2,4);
 imshow(cDOG);
 title("difference of gaussians");
+%notare come DOG è una approx di laplace (ma invariante alla scala)
+figure(2)
+fLaplace=fspecial("laplacian");
+c3=imfilter(cameraman,fLaplace);
+imshow(c3)
+title("Laplacian")

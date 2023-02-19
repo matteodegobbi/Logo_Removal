@@ -1,0 +1,65 @@
+clear
+S = tcpserver("192.168.1.55",4316,"ByteOrder","little-endian");
+S.ConnectionChangedFcn = @callBackConnesso;
+global dataread;
+
+
+function callBackConnesso(S,~)
+global dataread;
+dataread=[];
+if S.Connected   
+    disp(['Connected with Client with IP: ',S.ClientAddress,' at port number ',num2str(S.ClientPort)]);
+    continua=true;
+    while continua
+        if S.NumBytesAvailable>0
+            currentBytes=[S.read(S.NumBytesAvailable,"uint8")];
+            dataread=[dataread,currentBytes];
+            disp("fine:");
+            continua=~checkFineStream(dataread);
+            disp(~continua);
+            %disp(dataread)
+        end
+    end
+    disp("fine ciclo")
+    %scrive l'immagine su un file png usando Java
+    outputFile=javaObject("java.io.File","outputFile.png");
+    outputStream=javaObject("java.io.FileOutputStream",outputFile);
+    javaMethod("write",outputStream,dataread)
+    javaMethod("close",outputStream)
+    %rimuovo il logo
+    logoImage = im2double(rgb2gray(imread('pokemon/logo.png')));;
+    sceneImage=im2double(rgb2gray(imread("outputFile.png")));
+    immagineCensurata=SIFT_frame_funzione(logoImage,sceneImage);
+    imwrite(immagineCensurata,"censurataOutput.jpg","jpeg","Quality",50)
+    %rispondo al client
+    
+%     immagineCensurata=im2uint8(immagineCensurata);
+%    
+%     disp(class(immagineCensurata))
+%     B = reshape(immagineCensurata.',1,[]);
+    fr = matlab.io.datastore.DsFileReader("censurataOutput.png");
+    lunghezza=fr.Size
+    A = read(fr,lunghezza);
+    disp(fr.Size)
+    disp(size(A))
+    writeline(S,num2str(lunghezza));
+    byteInviati=0;
+    while(byteInviati<lunghezza)
+    end
+    write(S,A,"uint8");
+    disp(A(1))
+    flush(S)  
+else
+    disp('Client disconnected')
+end
+end
+
+function fine=checkFineStream(data)
+fine = true;
+dimensioni=size(data);
+lunghezza=dimensioni(2);
+for i=0:31
+    fine=and(fine,data(lunghezza-i)==0);
+end
+    
+end
