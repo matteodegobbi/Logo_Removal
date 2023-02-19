@@ -1,4 +1,13 @@
 # Logo Removal 
+## Struttura del progetto
+- funzione MATLAB `SIFT_frame_funzione` che rimuove un logo da una foto passati come parametro
+- server MATLAB che riceve una immagine via socket TCP e la censura rimuovendo il logo se presente
+- app android in Kotlin che invia via socket TCP una immagine al server MATLAB dall'archivio del telefono
+- funzioni e script per la Demo all'esame
+### Funzioni demo:
+- `videoCensor` è una funzione che prende come input il percorso di un video e di un logo e censura da tutti i frame il logo si può provare con 
+
+---
 ## Cos'è SIFT? (Scale Invariant Feature Transform)
 SIFT è un algoritmo di estrazione di feature da un'immagine che prende in input un'immagine e restituisce un sottoinsieme di punti rappresentativi dell'immagine (keyPoints) con delle corrispondenti descrizioni dei punti che possono essere utilizzate per trovare corrispodenze tra immagini diverse, SIFT è invariante a cambiamenti di scala e in gran parte anche a rotazioni.
 
@@ -11,13 +20,20 @@ Poi SIFT ottiene un nuovo set di immagini per ogni ottava sottranedo dalle immag
 Su questo set chiamato DOG difference of gaussians per ogni immagine si trovano gli estremi locali. Per farlo si compara ogni pixel con gli 8 che lo circondano nella immagine e con i 9 corrispondenti nell'ottava precedente e i 9 corrispondenti nell'ottava successiva se il pixel è > di questi altri 26 (o < di tutti) allora viene preso come feature.
 
 #### Approsimazione del Laplaciano
-la DOG approssima l'operatore Laplaciano con la differenza che non deve essere normalizzato per la scala (Laplaciano è scale variant perché le immagini a risoluzione più alta hanno pendenze più basse ovvero valori delle derivate più bassi)
+La DOG approssima l'operatore Laplaciano con la differenza che non deve essere normalizzato per la scala (Laplaciano è scale variant perché le immagini a risoluzione più alta hanno pendenze più basse ovvero valori delle derivate più bassi)
 [Feature Detection with Automatic Scale Selection[1]](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwimn5HDnKL9AhXdVPEDHWv8DBUQgAMoAHoECAQQAw&url=https%3A%2F%2Fscholar.google.it%2Fscholar_url%3Furl%3Dhttps%3A%2F%2Fwww.diva-portal.org%2Fsmash%2Fget%2Fdiva2%3A453064%2FFULLTEXT01.pdf%26hl%3Dit%26sa%3DX%26ei%3DeWvyY53MAYnRmQG5rZjoBQ%26scisig%3DAAGBfm2D1tnXnxPIQhLCQ1lZ67xJ3atmlw%26oi%3Dscholarr&usg=AOvVaw2Un3fIr2ZUJbkX0xfO4-kr).
 
 ## Rimozione feature a contrasto basso o lungo bordi
 Con la procedura precedente otteniamo troppi feature points: dobbiamo eliminare le feature spurie date da punti a basso contrasto o bordi che non sono dei veri estremi locali.
-Prima di tutto si rimuovono i punti in aree a basso contrasto: si computa la differenza tra il pixel del keypoint e quelli adiacenti se questa è sotto un certo threshold il keypoint viene scartato.
-Rimozione dei keypoint dovuti esclusivamente a bordi: lungo i bordi di un oggetto si avrà che lungo la direzione parallela al bordo i valori dei pixel cambiano di poco mentre nelle altre direzioni cambiano di molto questo genera dei keypoint molto sensibili al rumore (che può trasformare punti di sella in estremi locali) per individuare questi falsi estremi si utilizzano gli autovalori della matrice Hessiana se il loro rapporto è maggiore di una certa soglia i punti vengono scartati (il rapporto degli autovalori è proporzionale alla differenza tra la curvatura lungo x e quella lungo y).
+Prima di tutto si rimuovono i punti in aree a basso contrasto: si computa la differenza tra il pixel del keypoint e quelli adiacenti, se questa è sotto un certo threshold il keypoint viene scartato.
+
+Rimozione dei keypoint dovuti esclusivamente a bordi: lungo la direzione parallela ai bordi di un oggetto i valori dei pixel cambiano poco mentre nelle altre direzioni cambiano molto. 
+
+Questo genera dei keyPoint molto sensibili al rumore,quindi eventuale rumore può trasformare punti di sella in estremi locali. 
+
+Per individuare questi falsi estremi si utilizzano gli autovalori della matrice Hessiana, se il loro rapporto è maggiore di una certa soglia i punti vengono scartati 
+
+(questo perché il rapporto degli autovalori è proporzionale alla differenza tra la curvatura lungo x e quella lungo y).
 | ![burano bordo su un muro](immaginiREADME/burano.jpeg) |
 | :--: |
 |Bordo che può causare falsi estremi locali|
@@ -58,4 +74,6 @@ Questo si può fare su Matlab con `transformPointsForward(trasformazione,poligon
 | ![logo in zona con riflessi](immaginiREADME/s3Removal.jpg) |
 | :--: |
 |Il logo viene eliminato ma si nota la censura a causa dei riflessi della scatola|
+
+_La funzione `SIFT_frame_funzione` esegue tutti i passaggi di `mainSIFT.m` senza mostrare le figure in modo poterla usare nella demo della `censuraVideo` e nel server._
 
