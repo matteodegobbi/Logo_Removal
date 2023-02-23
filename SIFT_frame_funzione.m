@@ -1,4 +1,4 @@
-function [J,error]=SIFT_frame_funzione(logoImage,sceneImage,Match)
+function [J,error]=SIFT_frame_funzione(logoImage,sceneImage)
 %questa funzione prende come input le immagini del logo e la foto da censurare 
 %e cancella il logo dall'immagine
 
@@ -12,7 +12,7 @@ scenePoints = detectSIFTFeatures(sceneImage);
 [sceneFeatures, scenePoints] = extractFeatures(sceneImage, scenePoints);
 
 %matching delle feature con distanza euclidea tra i vettori di feature
-logoPairs = matchFeatures(logoFeatures, sceneFeatures,"MatchThreshold",Match);
+logoPairs = matchFeatures(logoFeatures, sceneFeatures,"MatchThreshold",10);
 
 matchedLogoPoints = logoPoints(logoPairs(:, 1), :);
 matchedScenePoints = scenePoints(logoPairs(:, 2), :);

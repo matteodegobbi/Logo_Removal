@@ -17,7 +17,7 @@ while hasFrame(vidObj)%applica la censura frame per frame
     disp(""+i+'/'+vidObj.NumFrames);%printa il progresso corrente
     i=i+1;
 end
-video = VideoWriter(strcat('proveVideo/cameoM',num2str(j),'err',num2str(errorcounter),'affine.avi')); %crea l'oggetto video
+video = VideoWriter(strcat('proveVideo/cameoM',num2str(j),'err',num2str(errorcounter),'proj.avi')); %crea l'oggetto video
 video.FrameRate=vidObj.FrameRate;
 open(video); %apre il file video
 for i=1:vidObj.NumFrames
