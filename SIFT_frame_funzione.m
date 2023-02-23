@@ -1,4 +1,4 @@
-function [J,error]=SIFT_frame_funzione(logoImage,sceneImage)
+function [J,error]=SIFT_frame_funzione(logoImage,sceneImage,Match)
 %questa funzione prende come input le immagini del logo e la foto da censurare 
 %e cancella il logo dall'immagine
 
@@ -12,13 +12,14 @@ scenePoints = detectSIFTFeatures(sceneImage);
 [sceneFeatures, scenePoints] = extractFeatures(sceneImage, scenePoints);
 
 %matching delle feature con distanza euclidea tra i vettori di feature
-logoPairs = matchFeatures(logoFeatures, sceneFeatures,"MatchThreshold",10);
+logoPairs = matchFeatures(logoFeatures, sceneFeatures,"MatchThreshold",Match);
 
 matchedLogoPoints = logoPoints(logoPairs(:, 1), :);
 matchedScenePoints = scenePoints(logoPairs(:, 2), :);
 
 try
-    %TODO AGGiungi commento
+    %stima la trasformazione che porta dai keyPoints del logo a quelli
+    %dell'immagine
     [tform, inlierIdx] = estgeotform2d(matchedLogoPoints, matchedScenePoints, 'affine');
     inlierLogoPoints   = matchedLogoPoints(inlierIdx, :);
     inlierScenePoints = matchedScenePoints(inlierIdx, :);
@@ -31,7 +32,8 @@ try
         1, size(logoImage, 1);...                 % vertice sx-giu
         1, 1];                   % chiude la spezzata
     
-    %TODO COMMENTO
+    %trasforma i vertici del logo nei punti che circondano il logo nella
+    %foto
     newLogoPolygon = transformPointsForward(tform, logoPolygon);
 
     %figure;
